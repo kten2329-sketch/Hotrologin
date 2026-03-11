@@ -1,0 +1,243 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Hotmail Tool</title>
+    <style>
+        :root {
+            --primary: #4facfe;
+            --secondary: #00f2fe;
+            --bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --border: rgba(255, 255, 255, 0.1);
+            --text: #f1f5f9;
+            --success: #10b981;
+            --highlight: #1e3a4a;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: radial-gradient(circle at top right, #1e293b, #0f172a);
+            color: var(--text);
+            font-family: 'Inter', system-ui, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+        }
+
+        .container { max-width: 600px; width: 100%; }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            margin-bottom: 1.2rem;
+        }
+
+        .header h1 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 100px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: #fff;
+            padding: 1rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            outline: none;
+            margin-bottom: 1rem;
+        }
+
+        .btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            color: white;
+            transition: 0.2s;
+        }
+
+        .btn-copy { background: #0ea5e9; }
+        .btn-clear { background: #475569; }
+
+        .info-row {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin-bottom: 12px;
+            padding: 12px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid transparent;
+        }
+
+        .info-label {
+            font-size: 0.7rem;
+            color: var(--secondary);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            font-family: 'Fira Code', monospace;
+            font-size: 1rem;
+            word-break: break-all;
+            color: #fff;
+        }
+
+        .hotmail-highlight {
+            background: var(--highlight) !important;
+            border: 1px solid var(--primary);
+            box-shadow: 0 0 15px rgba(79, 172, 254, 0.2);
+        }
+
+        .read-btn {
+            width: 100%;
+            padding: 18px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            color: white;
+            border: none;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .status-msg { text-align: center; margin-top: 10px; font-size: 0.85rem; height: 20px; font-weight: 600; }
+        .success { color: var(--success); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header"><h1>PREMIUM HOTMAIL TOOL</h1></div>
+
+    <div class="card">
+        <textarea id="inputRaw" placeholder="Dán chuỗi dữ liệu vào đây (Hệ thống sẽ tự tách)..."></textarea>
+        <div class="btn-group">
+            <button class="btn btn-copy" id="copyBtn">📋 Copy Hotmail + Token</button>
+            <button class="btn btn-clear" id="clearBtn">🗑️ Xóa sạch</button>
+        </div>
+        <div id="copyStatus" class="status-msg"></div>
+    </div>
+
+    <div class="card">
+        <div class="info-row">
+            <span class="info-label">👤 User</span>
+            <span id="userVal" class="info-value">---</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">🔑 Mật khẩu</span>
+            <span id="passVal" class="info-value">---</span>
+        </div>
+        <div class="info-row hotmail-highlight">
+            <span class="info-label">📧 Hotmail (Địa chỉ Email)</span>
+            <span id="hotmailVal" class="info-value">---</span>
+        </div>
+    </div>
+
+    <button class="read-btn" id="readHotmailBtn">📨 ĐỌC HỘP THƯ NGAY</button>
+</div>
+
+<script>
+    const inputRaw = document.getElementById('inputRaw');
+    const userVal = document.getElementById('userVal');
+    const passVal = document.getElementById('passVal');
+    const hotmailVal = document.getElementById('hotmailVal');
+    const copyStatus = document.getElementById('copyStatus');
+    const clearBtn = document.getElementById('clearBtn');
+    const copyBtn = document.getElementById('copyBtn');
+    const readBtn = document.getElementById('readHotmailBtn');
+
+    let hotmailDataFull = ''; // Lưu toàn bộ chuỗi Mail|Token...
+
+    function showStatus(msg, type) {
+        copyStatus.innerText = msg;
+        copyStatus.className = 'status-msg ' + type;
+        setTimeout(() => { copyStatus.innerText = ''; }, 2000);
+    }
+
+    // Xử lý khi dán dữ liệu
+    inputRaw.oninput = () => {
+        const raw = inputRaw.value.trim();
+        const parts = raw.split('|');
+        
+        // Hiển thị User và Pass
+        if (parts.length >= 1) userVal.innerText = parts[0] || '---';
+        if (parts.length >= 2) passVal.innerText = parts[1] || '---';
+        
+        if (parts.length >= 3) {
+            // Chỉ hiển thị phần Email (phần tử thứ 3 trong chuỗi)
+            hotmailVal.innerText = parts[2]; 
+            // Lưu toàn bộ phần còn lại (từ email trở đi) để copy/đọc mail
+            hotmailDataFull = parts.slice(2).join('|').trim();
+            showStatus('✅ Đã tách dữ liệu!', 'success');
+        } else {
+            hotmailVal.innerText = '---';
+            hotmailDataFull = '';
+        }
+    };
+
+    clearBtn.onclick = () => {
+        inputRaw.value = '';
+        userVal.innerText = '---';
+        passVal.innerText = '---';
+        hotmailVal.innerText = '---';
+        hotmailDataFull = '';
+        inputRaw.focus();
+    };
+
+    copyBtn.onclick = () => {
+        if (!hotmailDataFull) return;
+        const el = document.createElement('textarea');
+        el.value = hotmailDataFull; // Copy chuỗi đầy đủ bao gồm token
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+        showStatus('🚀 Đã copy Full Hotmail + Token!', 'success');
+    };
+
+    readBtn.onclick = () => {
+        if (!hotmailDataFull) {
+            alert('Vui lòng dán dữ liệu trước!');
+            return;
+        }
+        // Gửi chuỗi đầy đủ lên trang đọc mail
+        window.open('https://dongvanfb.net/read_mail_box/?data=' + encodeURIComponent(hotmailDataFull), '_blank');
+    };
+</script>
+</body>
+</html>
